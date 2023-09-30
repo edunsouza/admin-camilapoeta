@@ -1,0 +1,75 @@
+@import './colors.scss';
+
+.ant-drawer-content-wrapper .ant-drawer-content {
+  background-color: $baseColor;
+
+  .ant-drawer-header {
+    background: $primaryColor;
+    border: none;
+    padding: 10px 15px;
+
+    .ant-drawer-close {
+      transition: all 0.2s;
+
+      &:hover {
+        transform: scale(1.2);
+      }
+
+      svg {
+        color: $baseColor;
+        height: 30px;
+        width: 30px;
+      }
+    }
+  }
+
+  .ant-drawer-body {
+    padding: 0;
+  }
+}
+
+.ant-btn[type=button] {
+
+  &.ant-btn-lg {
+    height: fit-content;
+    font-size: 20px;
+  }
+
+  &.ant-btn-primary {
+    background: $accentColor;
+
+    &:hover {
+      background: darken($accentColor, 10%);
+    }
+  }
+
+  &.ant-btn-secondary {
+    background: $primaryColor;
+
+    &:hover {
+      background: darken($primaryColor, 10%);
+    }
+  }
+}
+
+.ant-input-group-wrapper {
+
+  .ant-input-group-addon {
+    border: none;
+    text-align: left;
+    border-radius: 40px;
+    font-size: 20px;
+    font-weight: 400;
+    padding: 15px;
+    background: $white60;
+
+    &+.ant-input {
+      border: none;
+      border-top-right-radius: 40px;
+      border-bottom-right-radius: 40px;
+      font-size: 22px;
+      font-weight: 600;
+      padding: 8px;
+    }
+  }
+}
