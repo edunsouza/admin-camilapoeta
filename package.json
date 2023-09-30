@@ -10,9 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "antd": "^5.9.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "sass": "^1.66.1",
+    "wouter": "^2.11.0",
     "zustand": "^4.4.1"
   },
   "devDependencies": {
