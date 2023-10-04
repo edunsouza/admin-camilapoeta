@@ -7,3 +7,9 @@ export const shallowEqual = <T extends object>(a: T, b: T) => {
   }
   return true;
 };
+
+export const getDefinedKeys = <T extends object>(a: T) => {
+  const draft = { ...a };
+  (Object.keys(draft) as (keyof T)[]).forEach(k => draft[k] === undefined && delete draft[k]);
+  return draft;
+};
