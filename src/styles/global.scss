@@ -1,0 +1,33 @@
+@import './colors.scss';
+@import './overrides.scss';
+
+body {
+  background: $baseColor;
+  color: $textColor;
+}
+
+#root {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  font-weight: 400;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.animation-spin {
+  animation: animation-spin 1s infinite linear;
+
+  @keyframes animation-spin {
+    from {
+      transform: rotate(0deg);
+    }
+
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}

@@ -1,16 +1,21 @@
 import { create } from 'zustand';
 
-interface Settings {
+interface State {
   appTitle: string;
   menuOpen: boolean;
 }
 
-interface State extends Settings {
-  setSettings: (settings: Partial<Settings>) => void;
+export const useSettings = create<State>(() => ({
+  appTitle: 'Admin CP',
+  menuOpen: false
+}));
+
+const set = useSettings.setState;
+
+export async function setAppTitle(appTitle: string) {
+  set({ appTitle });
 }
 
-export const useSettings = create<State>((set) => ({
-  appTitle: '',
-  menuOpen: false,
-  setSettings: (settings: Partial<Settings>) => set(settings)
-}));
+export async function setMenuOpen(menuOpen: boolean) {
+  set({ menuOpen });
+}

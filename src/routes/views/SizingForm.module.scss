@@ -16,7 +16,5 @@
 
   span:has(+ input[type=text]) {
     width: 65%;
-    background: lighten($accentColor, 25%);
-    color: $primaryColor;
   }
 }

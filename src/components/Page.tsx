@@ -1,23 +1,23 @@
 import { PropsWithChildren } from 'react';
-import { useLocation } from 'wouter';
-import { Drawer } from 'antd';
-import { useSettings } from '../store';
+import { useLocation, useRoute } from 'wouter';
+import { Drawer, Typography } from 'antd';
+import { useSettings, setMenuOpen } from '../store/settings';
 import { menuItems } from '../routes';
-import { MenuIcon } from '../icons/Menu';
+import { MenuIcon } from '../icons';
 import styles from './Page.module.scss';
 
 export const PageHeader = () => {
-  const [title, set] = useSettings(({ appTitle, setSettings }) => [appTitle, setSettings]);
-  const onOpenDrawer = () => set({ menuOpen: true });
+  const title = useSettings(({ appTitle }) => appTitle);
+  const onOpenDrawer = () => setMenuOpen(true);
 
   return (
     <nav className={styles.header}>
       <i className={styles.icon} onClick={onOpenDrawer}>
         <MenuIcon />
       </i>
-      <label className={styles.title}>
+      <Typography.Title className={styles.title}>
         {title}
-      </label>
+      </Typography.Title>
     </nav>
   );
 };
@@ -31,14 +31,8 @@ export const PageBody = ({ noPadding, children }: PropsWithChildren<{ noPadding?
 };
 
 export const SideMenu = () => {
-  const [, setLocation] = useLocation();
-  const [isOpen, set] = useSettings(({ menuOpen, setSettings }) => [menuOpen, setSettings]);
-
-  const closeMenu = () => set({ menuOpen: !isOpen });
-  const navigate = (route: string) => {
-    setLocation(route);
-    closeMenu();
-  };
+  const isOpen = useSettings(({ menuOpen }) => menuOpen);
+  const closeMenu = () => setMenuOpen(false);
 
   return (
     <Drawer
@@ -48,15 +42,28 @@ export const SideMenu = () => {
       width="70%"
     >
       <nav className={styles.sideMenu}>
-        {
-          menuItems.map(({ name, route }) => (
-            <p key={name} className={styles.menuItem} onClick={() => navigate(route)}>
-              {name}
-            </p>
-          ))
-        }
+        {menuItems.map(({ name, route }) => (
+          <MenuItem key={name} path={route} onClick={closeMenu}>
+            {name}
+          </MenuItem>
+        ))}
       </nav>
     </Drawer>
   );
 };
 
+const MenuItem = ({ path, onClick, children }: PropsWithChildren<{ path: string, onClick: () => void }>) => {
+  const [, setLocation] = useLocation();
+  const [isActive] = useRoute(path);
+
+  const navigate = () => {
+    setLocation(path);
+    onClick();
+  };
+
+  return (
+    <Typography.Paragraph className={`${styles.menuItem} ${isActive ? styles.active : ''}`} onClick={navigate}>
+      {children}
+    </Typography.Paragraph>
+  );
+};

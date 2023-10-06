@@ -1,30 +1,30 @@
 export { Router } from './Router';
 
-type MenuItem = {
-  group: string;
-  name: string;
-  route: string;
-  isActive: () => boolean;
-};
+export type RouteParams = {
+  CustomerDetails: { id: string };
+}
 
 export const routes = {
   customers: '/clientes',
   addCustomer: '/clientes/novo',
   customerDetails: '/clientes/:id',
-  sizing: '/medidas/:id',
 };
 
-export const menuItems: MenuItem[] = [
+export const parseRoute = (key: keyof typeof routes, ...params: string[]) => {
+  return {
+    customers: routes.customers,
+    addCustomer: routes.addCustomer,
+    customerDetails: routes.customerDetails.replace(':id', params?.[0] ?? ''),
+  }[key];
+};
+
+export const menuItems: { name: string; route: string; }[] = [
   {
-    group: 'customers',
     name: 'Clientes',
     route: routes.customers,
-    isActive: () => false // TODO
   },
   {
-    group: 'add-customer',
     name: 'Adicionar Cliente',
     route: routes.addCustomer,
-    isActive: () => false // TODO
   },
 ];

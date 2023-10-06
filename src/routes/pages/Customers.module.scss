@@ -1,4 +1,27 @@
-.root {
+@import '../../styles/colors.scss';
+
+.search {
   display: flex;
   flex-direction: column;
+  padding: 10px 0;
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+
+  * {
+    cursor: pointer;
+  }
+
+  label {
+    color: $textColor;
+    font-weight: 600;
+  }
+
+  span {
+    color: $primaryColor;
+    font-weight: 600;
+    text-align: start;
+  }
 }

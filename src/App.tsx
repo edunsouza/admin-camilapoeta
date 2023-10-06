@@ -1,10 +1,9 @@
-import { useOnMount } from './hooks/useOnMount';
+import { useOnMount } from './hooks';
 import { Router } from './routes';
-import { PageHeader, SideMenu } from './components/Page';
-import './styles/overrides.scss';
-import './App.scss';
+import { PageHeader, SideMenu } from './components';
+import './styles/global.scss';
 
-function App() {
+export const App = () => {
   useOnMount(() => {
     const focusOutHandler = () => setTimeout(() => window.scrollTo({
       // iOS safari "scroll on focus" workaround
@@ -25,5 +24,3 @@ function App() {
     </>
   );
 }
-
-export default App;

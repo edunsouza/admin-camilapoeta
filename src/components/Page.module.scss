@@ -22,7 +22,10 @@ $headerHeight: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin: 0;
     font-size: 22px;
+    line-height: 22px;
+    color: $baseColor;
   }
 
   .icon {
@@ -49,7 +52,7 @@ $headerHeight: 50px;
   flex-direction: column;
   margin: $headerHeight 0 0 0;
   padding: 0;
-  height: calc(100vh - $headerHeight);
+  height: calc(100% - $headerHeight);
 
   &.padding {
     padding: 10px;
@@ -66,11 +69,19 @@ $headerHeight: 50px;
     cursor: pointer;
     user-select: none;
     transition: all 0.2s;
-    padding: 10px 20px;
+    margin: 0;
+    padding: 15px 20px;
     color: $primaryColor;
+    font-size: 20px;
 
     &:hover {
-      background: lighten($primaryColor, 50%);
+      background: $brightPrimaryColor;
+    }
+
+    &.active {
+      font-weight: bold;
+      font-style: italic;
+      background: lighten($brightPrimaryColor, 5%);
     }
   }
 }
