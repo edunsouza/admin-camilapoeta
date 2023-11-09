@@ -1,5 +1,5 @@
 import { PropsWithChildren } from 'react';
-import { useLocation, useRoute } from 'wouter';
+import { useMatch, useNavigate } from 'react-router-dom';
 import { Drawer, Typography } from 'antd';
 import { useSettings, setMenuOpen } from '../store/settings';
 import { menuItems } from '../routes';
@@ -53,16 +53,19 @@ export const SideMenu = () => {
 };
 
 const MenuItem = ({ path, onClick, children }: PropsWithChildren<{ path: string, onClick: () => void }>) => {
-  const [, setLocation] = useLocation();
-  const [isActive] = useRoute(path);
+  const navigate = useNavigate();
+  const isActive = useMatch(path);
 
-  const navigate = () => {
-    setLocation(path);
+  const visit = () => {
+    navigate(path);
     onClick();
   };
 
   return (
-    <Typography.Paragraph className={`${styles.menuItem} ${isActive ? styles.active : ''}`} onClick={navigate}>
+    <Typography.Paragraph
+      onClick={visit}
+      className={`${styles.menuItem} ${isActive ? styles.active : ''}`}
+    >
       {children}
     </Typography.Paragraph>
   );

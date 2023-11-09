@@ -1,84 +1,53 @@
 import { create } from 'zustand';
-import { ApiError, Customer, Pagination, Sizing } from '../types';
+import { ApiError, Customer, CustomerDetails, Pagination } from '../types';
 import { getDefinedKeys } from '../utils/objects';
 import * as customersService from '../services/customers';
 
-interface DraftCustomer extends Customer {
-  sizing: Partial<Sizing>;
-}
-
 type State = {
-  total: number,
-  customers: Customer[],
-  draftCustomer: Partial<DraftCustomer> | null;
-  pagination: Pagination,
-  loading: boolean,
-  error: string | null;
-  draftSaved: boolean;
+  pagination: Pagination;
+  total: number;
+  customers: Customer[];
+  customersLoading: boolean;
+  customersError: string | null;
+  draft: Partial<CustomerDetails> & { id: string };
+  draftTouched: boolean;
+  draftLoading: boolean;
+  draftError: string | null;
+  newCustomer: Partial<Customer>;
+  newCustomerLoading: boolean;
+  newCustomerError: string | null;
 }
 
-export const useCustomers = create<State>(() => ({
+const initialState: State = {
+  pagination: { page: '1', size: '20', search: '' },
+
   total: 0,
   customers: [],
-  draftCustomer: null,
-  pagination: { page: '1', size: '20', search: '' },
-  loading: false,
-  error: null,
-  draftSaved: true
-}));
+  customersLoading: false,
+  customersError: null,
 
-const set = useCustomers.setState;
+  draft: { id: '' },
+  draftTouched: false,
+  draftLoading: false,
+  draftError: null,
+
+  newCustomer: {},
+  newCustomerLoading: false,
+  newCustomerError: null
+};
+
+export const useCustomers = create<State>(() => initialState);
+
 // const get = useCustomers.getState;
+const set = useCustomers.setState;
 
-// --- actions ---
-
-export async function fetchCustomers({ page, size, search }: Pagination) {
-  try {
-    set({ loading: true, error: null });
-    const { results, total } = await customersService.fetchCustomers(page, size, search);
-    setCustomers(results, total);
-  } catch (error) {
-    if (error instanceof ApiError) {
-      set({ error: error.message });
-    }
-  } finally {
-    set({ loading: false });
-  }
-}
-
-export async function fetchCustomerDetails(id: string) {
-  try {
-    set({ loading: true, error: null });
-    const { sizing, ...details } = await customersService.fetchCustomerDetails(id);
-    setDraftCustomer({
-      id: details.id,
-      name: details.name,
-      email: details.email,
-      phone: details.phone,
-      sizing: {
-        id: sizing.id,
-        arm: sizing.arm,
-        back: sizing.back,
-        bust: sizing.bust,
-        bustHeight: sizing.bustHeight,
-        cleavage: sizing.cleavage,
-        crotch: sizing.crotch,
-        hip: sizing.hip,
-        sleeve: sizing.sleeve,
-        waist: sizing.waist,
-        bodyLength: sizing.bodyLength,
-        pantsLength: sizing.pantsLength,
-        skirtLength: sizing.skirtLength,
-      }
-    });
-  } catch (error) {
-    if (error instanceof ApiError) {
-      set({ error: error.message });
-    }
-  } finally {
-    set({ loading: false });
-  }
-}
+export function setCustomersLoading(customersLoading: boolean) { set({ customersLoading }); }
+export function setCustomersError(customersError: string | null) { set({ customersError }); }
+export function setDraftTouched(draftTouched: boolean) { set({ draftTouched }); }
+export function setDraftLoading(draftLoading: boolean) { set({ draftLoading }); }
+export function setDraftError(draftError: string | null) { set({ draftError }); }
+export function setNewCustomerLoading(newCustomerLoading: boolean) { set({ newCustomerLoading }); }
+export function setNewCustomerError(newCustomerError: string | null) { set({ newCustomerError }); }
 
 export function setPagination(pagination: Partial<Pagination>) {
   const current = getDefinedKeys(pagination);
@@ -92,45 +61,126 @@ export function setPagination(pagination: Partial<Pagination>) {
   }));
 }
 
+// customers
+
 export function setCustomers(customers: Customer[], total?: number) {
   set({ customers, total: total ?? customers.length });
 }
 
-export function insertCustomer(customer: Customer) {
+export function addCustomer(customer: Customer) {
   set(({ customers }) => ({ customers: [...customers, customer] }));
 }
 
-export function updateCustomer(updates: Partial<Customer> & { id: Customer['id'] }) {
+export function replaceCustomer(replacement: Customer) {
   set(({ customers }) => ({
-    customers: customers.map(customer => {
-      if (customer.id === updates.id) {
-        return { ...customer, ...updates };
-      }
-      return customer;
-    })
+    customers: customers.map(customer => customer.id?.toString() === replacement.id?.toString()
+      ? replacement
+      : customer
+    )
   }));
 }
 
-export function setDraftSaved(draftSaved: boolean) {
-  set({ draftSaved });
+// draft
+
+export function setDraft(draft: CustomerDetails) {
+  setDraftTouched(false);
+  set({ draft });
 }
 
-export function setDraftCustomer(customer: DraftCustomer) {
-  setDraftSaved(true);
-  set(() => ({ draftCustomer: customer }));
-}
-
-export function updateDraftCustomer(updates: Partial<Omit<DraftCustomer, 'id' | 'sizing'>>) {
-  setDraftSaved(false);
-  set(({ draftCustomer }) => ({ draftCustomer: { ...draftCustomer, ...updates } }));
-}
-
-export function updateCustomerSizing(sizing: Partial<Sizing>) {
-  setDraftSaved(false);
-  set(({ draftCustomer }) => ({
-    draftCustomer: {
-      ...draftCustomer,
-      sizing: { ...draftCustomer?.sizing, ...sizing }
+export function changeDraft(changes: Partial<CustomerDetails>) {
+  setDraftTouched(true);
+  set(({ draft }) => ({
+    draft: {
+      ...draft,
+      ...changes,
+      id: draft.id,
+      sizeId: draft.sizeId
     }
   }));
+}
+
+export function resetDraft() {
+  set({ draft: initialState.draft });
+}
+
+// new customer
+
+export function setNewCustomer(newCustomer: Partial<Customer>) {
+  set({ newCustomer });
+}
+
+export function changeNewCustomer(changes: Partial<Customer>) {
+  set(({ newCustomer }) => ({
+    newCustomer: {
+      ...newCustomer,
+      ...changes,
+      id: newCustomer.id
+    }
+  }));
+}
+
+// ------------------------------------------------------------------
+// ------------------------ EXTERNAL ACTIONS ------------------------
+// ------------------------------------------------------------------
+
+export async function fetchCustomers({ page, size, search }: Pagination) {
+  try {
+    setCustomersError(null);
+    setCustomersLoading(true);
+    const { results, total } = await customersService.fetchCustomers(page, size, search);
+    setCustomers(results, total);
+  } catch (error) {
+    if (error instanceof ApiError) {
+      setCustomersError(error.message);
+    }
+  } finally {
+    setCustomersLoading(false);
+  }
+}
+
+export async function fetchCustomerDetails(id: string) {
+  try {
+    setDraftError(null);
+    setDraftLoading(true);
+    const details = await customersService.fetchCustomerDetails(id);
+    setDraft(details);
+  } catch (error) {
+    if (error instanceof ApiError) {
+      setDraftError(error.message);
+    }
+  } finally {
+    setDraftLoading(false);
+  }
+}
+
+export async function createCustomer(draft: Omit<Customer, 'id'>) {
+  try {
+    setNewCustomerError(null);
+    setNewCustomerLoading(true);
+    const customer = await customersService.createCustomer(draft);
+    addCustomer(customer);
+    setNewCustomer(customer);
+  } catch (error) {
+    if (error instanceof ApiError) {
+      setNewCustomerError(error.message);
+    }
+  } finally {
+    setNewCustomerLoading(false);
+  }
+}
+
+export async function updateCustomer(id: string, updates: Partial<Customer>) {
+  try {
+    setDraftError(null);
+    setDraftLoading(true);
+    const customer = await customersService.updateCustomer(id, updates);
+    replaceCustomer(customer);
+    setDraft(customer);
+  } catch (error) {
+    if (error instanceof ApiError) {
+      setDraftError(error.message);
+    }
+  } finally {
+    setDraftLoading(false);
+  }
 }

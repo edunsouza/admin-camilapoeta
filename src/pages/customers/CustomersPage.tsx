@@ -1,16 +1,22 @@
 import { useEffect } from 'react';
-import { useLocation } from 'wouter';
+import { useNavigate } from 'react-router-dom';
 import { Card, Input } from 'antd';
-import { parseRoute } from '..';
+import { parseRoute } from '../../routes';
 import { setAppTitle } from '../../store/settings';
 import { useCustomers, fetchCustomers, setPagination } from '../../store/customers';
 import { useOnMount, useDebouncedValue } from '../../hooks';
 import { List, PageBody, Retry } from '../../components';
-import styles from './Customers.module.scss';
+import styles from './CustomersPage.module.scss';
 
 export const CustomersPage = () => {
-  const [, setLocation] = useLocation();
-  const { customers, total, loading, error, pagination } = useCustomers();
+  const navigate = useNavigate();
+  const [customers, total, loading, error, pagination] = useCustomers(s => [
+    s.customers,
+    s.total,
+    s.customersLoading,
+    s.customersError,
+    s.pagination
+  ]);
   const debouncedSearch = useDebouncedValue(pagination.search);
 
   useOnMount(() => {
@@ -24,7 +30,7 @@ export const CustomersPage = () => {
   }, [debouncedSearch, pagination]);
 
   const viewCustomerDetails = (id: string) => {
-    setLocation(parseRoute('customerDetails', id));
+    navigate(parseRoute('customerDetails', id));
   };
 
   const retryFetchCustomers = () => {

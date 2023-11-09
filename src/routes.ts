@@ -1,12 +1,10 @@
-export { Router } from './Router';
-
 export type RouteParams = {
   CustomerDetails: { id: string };
 }
 
 export const routes = {
   customers: '/clientes',
-  addCustomer: '/clientes/novo',
+  addCustomer: '/novo-cliente',
   customerDetails: '/clientes/:id',
 };
 

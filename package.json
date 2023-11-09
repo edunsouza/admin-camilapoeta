@@ -4,8 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "local": "vite --host 0.0.0.0",
+    "dev": "vite --host 0.0.0.0",
     "build": "tsc && vite build",
     "clean": "rm -r ./dist",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
@@ -15,8 +14,8 @@
     "antd": "^5.9.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-router-dom": "^6.18.0",
     "sass": "^1.66.1",
-    "wouter": "^2.11.0",
     "zustand": "^4.4.1"
   },
   "devDependencies": {

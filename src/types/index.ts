@@ -1,27 +1,33 @@
 export class ApiError extends Error {
   status: number = 500;
+  body: Record<string, unknown> | null;
 
-  constructor(message: string, status: number) {
-    super(message);
+  constructor(content: Record<string, unknown>, status: number) {
+    super(
+      content?.message?.toString()
+      || content?.error?.toString()
+      || 'Erro desconhecido'
+    );
     this.status = status;
+    this.body = content ?? null;
   }
 }
 
-export interface Pagination {
+export type Pagination = {
   page: string;
   size: string;
   search?: string;
-}
+};
 
-export interface Customer {
-  id: string | null;
+export type Customer = {
+  id: string;
   name: string;
   phone: string;
   email: string;
-}
+};
 
-export type Sizing = {
-  id: string;
+export type CustomerDetails = Customer & {
+  sizeId: string;
   bust: string;
   waist: string;
   hip: string;

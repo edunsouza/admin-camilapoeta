@@ -1,5 +1,9 @@
+import { BrowserRouter, Route, Routes,  } from 'react-router-dom';
+import { routes } from './routes';
+import { CustomersPage } from './pages/customers/CustomersPage';
+import { CustomerDetailsPage } from './pages/customerDetails/CustomerDetailsPage';
+import { CreateCustomerPage } from './pages/createCustomer/CreateCustomerPage';
 import { useOnMount } from './hooks';
-import { Router } from './routes';
 import { PageHeader, SideMenu } from './components';
 import './styles/global.scss';
 
@@ -17,10 +21,15 @@ export const App = () => {
   });
 
   return (
-    <>
+    <BrowserRouter>
       <PageHeader />
       <SideMenu />
-      <Router />
-    </>
+      <Routes>
+        <Route path={routes.customers} Component={CustomersPage} />
+        <Route path={routes.customerDetails} Component={CustomerDetailsPage} />
+        <Route path={routes.addCustomer} Component={CreateCustomerPage} />
+        <Route path="*" Component={CustomersPage} />
+      </Routes>
+    </BrowserRouter>
   );
 }

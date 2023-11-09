@@ -1,0 +1,11 @@
+.form {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+
+  >span>span>span:has(+ input[type=text]) {
+    min-width: 85px;
+    text-align: center;
+  }
+}

@@ -56,6 +56,10 @@
       color: $primaryColor;
     }
   }
+
+  &.ant-btn[disabled] {
+    background-color: $gray;
+  }
 }
 
 .ant-input-group-wrapper {
@@ -143,6 +147,11 @@
       }
     }
   }
+
+  .ant-list-empty-text {
+    font-size: 20px;
+    color: $gray;
+  }
 }
 
 .ant-card {
@@ -221,11 +230,16 @@
 .ant-alert {
   font-weight: 500;
   font-size: 16px;
-  
+
   &.ant-alert-info {
     color: $infoColor;
   }
+
   &.ant-alert-warning {
     color: $warningColor;
+  }
+
+  &.ant-alert-error {
+    color: $dangerColor;
   }
 }

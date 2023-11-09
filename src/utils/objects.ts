@@ -13,3 +13,13 @@ export const getDefinedKeys = <T extends object>(a: T) => {
   (Object.keys(draft) as (keyof T)[]).forEach(k => draft[k] === undefined && delete draft[k]);
   return draft;
 };
+
+export const getChanges = <T extends object>(original: T, draft: T) => {
+  const updates: Partial<T> = {};
+  Object.keys(draft).forEach(key => {
+    if (original[key as keyof T] !== draft[key as keyof T]) {
+      updates[key as keyof T] = draft[key as keyof T]
+    }
+  });
+  return updates;
+}
