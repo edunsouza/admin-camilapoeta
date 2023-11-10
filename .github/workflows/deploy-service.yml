@@ -17,10 +17,10 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: "service"
           secrets: |
-            SECRET1
-            SECRET2
-            SECRET3
+            PROD_DB_HOST
+            PROD_DB_PASSWORD
+            PROD_DB_USER
         env:
-          SECRET1: ${{ secrets.PROD_DB_HOST }}
-          SECRET2: ${{ secrets.PROD_DB_PASSWORD }}
-          SECRET3: ${{ secrets.PROD_DB_USER }}
+          PROD_DB_HOST: ${{ secrets.PROD_DB_HOST }}
+          PROD_DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
+          PROD_DB_USER: ${{ secrets.PROD_DB_USER }}
