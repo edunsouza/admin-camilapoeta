@@ -6,6 +6,11 @@ app/*.local
 app/.env
 
 service/.dev.*
+service/.env
+service/dist
+service/build
+service/dist-ssr
+service/*.local
 service/node_modules
 
 # logs
