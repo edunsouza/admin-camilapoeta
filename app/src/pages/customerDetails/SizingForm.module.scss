@@ -1,0 +1,20 @@
+@import '../../styles/colors.scss';
+@import '../../styles/sizes.scss';
+
+.form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+
+  @include sm {
+    grid-template-columns: 1fr 1fr;
+
+    >button:last-child {
+      grid-column: span 2;
+    }
+  }
+
+  span:has(+ input[type=text]) {
+    width: 65%;
+  }
+}
