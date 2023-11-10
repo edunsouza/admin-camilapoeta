@@ -4,6 +4,8 @@ export interface Env {
 	PROD_DB_USER: string;
 }
 
+// testing CI build #2
+
 export default {
 	async fetch(
 		request: Request,
@@ -14,7 +16,7 @@ export default {
 			METHOD: request.method,
 			'env.PROD_DB_HOST': env.PROD_DB_HOST,
 			'env.PROD_DB_PASSWORD': env.PROD_DB_PASSWORD,
-			'env.PROD_DB_USER': env.PROD_DB_USER,
+			'env.PROD_DB_USER': env.PROD_DB_USER
 		}), {
 			headers: {
 				'Content-Type': 'application/json'
