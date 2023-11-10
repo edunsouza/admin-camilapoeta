@@ -1,4 +1,4 @@
-name: Deploy Service (Workers Script)
+name: Deploy Service (Cloudflare Worker)
 
 on:
   push:
@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Build & Deploy Worker
+      - name: Deploy to Cloudflare Worker
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}

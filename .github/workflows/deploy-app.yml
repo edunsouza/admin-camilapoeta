@@ -11,13 +11,24 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    name: Deploy
+    permissions:
+      contents: read
+      deployments: write
+    name: Deploy to Cloudflare Pages
     steps:
-      - uses: actions/checkout@v3
-      - name: Deploy
-        uses: cloudflare/wrangler-action@v3
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build
+        run: cd app && npm ci && npm run build
+      - name: Publish
+        uses: cloudflare/pages-action@1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: "app"
-          command: npm run build && pages deploy --project-name=$PROJECT_NAME
+          projectName: $PROJECT_NAME
+          directory: app/dist
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          # apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          # accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # workingDirectory: "app"
+          # command: npm run build && pages deploy --project-name=$PROJECT_NAME
