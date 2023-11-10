@@ -7,8 +7,6 @@ import { useOnMount } from './hooks';
 import { PageHeader, SideMenu } from './components';
 import './styles/global.scss';
 
-// testing deploy-app workflow #3
-
 export const App = () => {
   useOnMount(() => {
     const focusOutHandler = () => setTimeout(() => window.scrollTo({

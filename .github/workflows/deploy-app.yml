@@ -28,7 +28,3 @@ jobs:
           projectName: ${{ env.PROJECT_NAME }}
           directory: app/dist
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          # apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          # accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          # workingDirectory: "app"
-          # command: npm run build && pages deploy --project-name=$PROJECT_NAME

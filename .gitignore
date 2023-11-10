@@ -5,11 +5,11 @@ app/dist-ssr
 app/*.local
 app/.env
 
+service/build
+service/dist
+service/.wrangler
 service/.dev.*
 service/.env
-service/dist
-service/build
-service/dist-ssr
 service/*.local
 service/node_modules
 
