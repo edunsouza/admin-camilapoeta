@@ -1,0 +1,25 @@
+name: Deploy Service (Workers Script)
+
+on:
+  push:
+    branches: ['main']
+    paths: ['service/**']
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build & Deploy Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          secrets: |
+            SECRET1
+            SECRET2
+            SECRET3
+        env:
+          SECRET1: ${{ secrets.PROD_DB_HOST }}
+          SECRET2: ${{ secrets.PROD_DB_PASSWORD }}
+          SECRET3: ${{ secrets.PROD_DB_USER }}
