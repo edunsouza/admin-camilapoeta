@@ -7,7 +7,7 @@ import { useOnMount } from './hooks';
 import { PageHeader, SideMenu } from './components';
 import './styles/global.scss';
 
-// testing deploy-app workflow #1
+// testing deploy-app workflow #2
 
 export const App = () => {
   useOnMount(() => {
