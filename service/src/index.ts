@@ -2,8 +2,8 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { WorkerEnv } from './configs';
 import { authChecker, dbConnector } from './middlewares';
-import * as customersService from './customers';
-import * as systemService from './system';
+import * as customersService from './customers.controller';
+import * as systemService from './system.controller';
 
 const isDev = (env: WorkerEnv) => env.WORKER_ENV === 'dev';
 

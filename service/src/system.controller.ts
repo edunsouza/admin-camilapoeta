@@ -1,9 +1,5 @@
 import { Context } from 'hono';
-
-type SystemInfo = {
-  id: number;
-  last_update: string;
-}
+import { sendWhatsappMessage, unknownError } from './helpers';
 
 export const touchSystem = async (c: Context) => {
   console.log('SYSTEM TOUCH REQUESTED');
@@ -18,8 +14,11 @@ export const touchSystem = async (c: Context) => {
       WHERE id = 1;
     `, [now]);
 
+    await sendWhatsappMessage(c, 'Planetscale DB prevented from sleep (camilapoeta-com)');
+
     return c.json({ touchedAt: now });
   } catch (error) {
     console.log(error);
+    return unknownError(c);
   }
 };
