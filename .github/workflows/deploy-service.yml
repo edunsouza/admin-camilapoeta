@@ -20,7 +20,11 @@ jobs:
             PROD_DB_HOST
             PROD_DB_PASSWORD
             PROD_DB_USER
+            CALLMEBOT_API_KEY
+            ALERTS_PHONE
         env:
           PROD_DB_HOST: ${{ secrets.PROD_DB_HOST }}
           PROD_DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
           PROD_DB_USER: ${{ secrets.PROD_DB_USER }}
+          CALLMEBOT_API_KEY: ${{ secrets.CALLMEBOT_API_KEY }}
+          ALERTS_PHONE: ${{ secrets.ALERTS_PHONE }}
