@@ -52,7 +52,7 @@ export const getById = async (c: WorkerContext) => {
   const { id } = c.req.param();
 
   if (!id) {
-    return badRequestError(c, 'Cliente não encontrado');
+    return badRequestError(c, 'Cliente inválido');
   }
 
   try {
@@ -75,7 +75,7 @@ export const updateById = async (c: WorkerContext) => {
   const body = await c.req.json();
 
   if (!id) {
-    return badRequestError(c, 'Cliente não encontrado');
+    return badRequestError(c, 'Cliente inválido');
   }
 
   try {

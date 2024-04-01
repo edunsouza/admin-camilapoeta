@@ -10,6 +10,8 @@ const getAllowedOrigin = (env: WorkerEnv) => {
 	return isDev(env) ? '*' : ['https://admin.camilapoeta.com'];
 };
 
+// triggering gh action - attempt #2
+
 export default {
 	async fetch(request: Request, env: WorkerEnv, ctx: ExecutionContext) {
 		const app = new Hono<{ Bindings: WorkerEnv }>();
