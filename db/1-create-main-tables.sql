@@ -1,12 +1,12 @@
 CREATE TABLE customers (
-  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  id INTEGER NOT NULL PRIMARY KEY,
   name TEXT NOT NULL,
   phone TINYTEXT,
   email TINYTEXT
-) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+);
 
 CREATE TABLE sizes (
-  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  id INTEGER NOT NULL PRIMARY KEY,
   customer_id INT NOT NULL,
   bust VARCHAR(15),
   waist VARCHAR(15),
@@ -20,9 +20,4 @@ CREATE TABLE sizes (
   body_length VARCHAR(15),
   skirt_length VARCHAR(15),
   pants_length VARCHAR(15)
-) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
-
-CREATE TABLE system (
-  id INT NOT NULL,
-  last_update TIMESTAMP
 );

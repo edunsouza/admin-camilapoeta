@@ -13,6 +13,8 @@ service/.env
 service/*.local
 service/node_modules
 
+db/backup
+
 # logs
 app/logs
 app/*.log

@@ -1,9 +1,8 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { WorkerEnv } from './configs';
-import { authChecker, dbConnector } from './middlewares';
+import { authChecker } from './middlewares';
 import * as customersService from './customers.controller';
-import * as systemService from './system.controller';
 
 const isDev = (env: WorkerEnv) => env.WORKER_ENV === 'dev';
 
@@ -18,16 +17,12 @@ export default {
 		// MIDDLEWARES
 		app.use('*', cors({ origin: getAllowedOrigin(env) }));
 		app.use('*', authChecker);
-		app.use('*', dbConnector);
 
 		// CUSTOMERS
 		app.get('/customers', customersService.getAll);
 		app.post('/customers', customersService.create);
 		app.get('/customers/:id', customersService.getById);
 		app.patch('/customers/:id', customersService.updateById);
-
-		// SYSTEM
-		app.get('/keep-alive', systemService.touchSystem);
 
 		// FALLBACK
 		app.get('*', customersService.getAll);

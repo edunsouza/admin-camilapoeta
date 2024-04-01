@@ -1,6 +1,3 @@
-import { DbConnection } from './configs';
-
-
 type CustomerDB = {
   id: string;
   name: string;
@@ -25,7 +22,7 @@ type SizeDB = {
   pants_length: string;
 };
 
-type CustomerDetails = CustomerDB & Omit<SizeDB, 'customer_id' | 'id'> & {
+type CustomerDetails = CustomerDB & Omit<SizeDB, 'customer_id'> & {
   size_id: string;
 };
 
@@ -51,19 +48,18 @@ const updatableSizeFields = [
   'pants_length'
 ];
 
-export const search = async (db: DbConnection, search: SearchParams) => {
+export const search = async (db: D1Database, search: SearchParams) => {
   const { size, offset, term } = search;
 
-  const params = { term: `%${term}%` };
+  const params = !term ? [] : [`%${term}%`];
   const where = !term ? '' : `
     WHERE
-      name LIKE :term
-      OR phone LIKE :term
-      OR email LIKE :term
+      name LIKE ?1
+      OR phone LIKE ?1
+      OR email LIKE ?1
   `;
   const countQuery = `
-    SELECT
-      count(id) AS total
+    SELECT count(id) AS total
     FROM customers
     ${where}
   `;
@@ -76,27 +72,24 @@ export const search = async (db: DbConnection, search: SearchParams) => {
   `;
 
   const [countResult, searchResult] = await Promise.all([
-    db.execute<{ total: string }>(countQuery, params),
-    db.execute<CustomerDB>(searchQuery, params)
+    db.prepare(countQuery).bind(...params).first<{ total: string }>(),
+    db.prepare(searchQuery).bind(...params).all<CustomerDB>()
   ]);
 
   return {
-    total: countResult.rows[0]?.total,
-    results: searchResult.rows
+    total: countResult?.total,
+    results: searchResult.results
   }
 };
 
-export const create = async (db: DbConnection, draft: Omit<CustomerDB, 'id'>) => {
+export const create = async (db: D1Database, draft: Omit<CustomerDB, 'id'>) => {
   const { name, email, phone } = draft;
 
-  const insertCustomer = `INSERT INTO customers (name, email, phone) VALUES (:name, :email, :phone)`;
-  const insertSize = `INSERT INTO sizes (customer_id) VALUES (:customerId)`;
+  const insertCustomer = `INSERT INTO customers (name, email, phone) VALUES (?1, ?2, ?3) RETURNING id`;
+  const { id: customerId } = await db.prepare(insertCustomer).bind(name, email, phone).first() as { id: string };
 
-  const insertCustomerValues = { name, email, phone };
-  const { insertId: customerId } = await db.execute(insertCustomer, insertCustomerValues);
-
-  const insertSizeValues = { customerId };
-  const { insertId: sizeId } = await db.execute(insertSize, insertSizeValues);
+  const insertSize = `INSERT INTO sizes (customer_id) VALUES (?1) RETURNING id`;
+  const { id: sizeId } = await db.prepare(insertSize).bind(customerId).first() as { id: string };
 
   return {
     id: customerId,
@@ -107,8 +100,7 @@ export const create = async (db: DbConnection, draft: Omit<CustomerDB, 'id'>) =>
   };
 };
 
-export const get = async (db: DbConnection, id: string) => {
-  const params = { id };
+export const get = async (db: D1Database, id: string) => {
   const query = `
     SELECT
       c.id AS id,
@@ -130,38 +122,36 @@ export const get = async (db: DbConnection, id: string) => {
       pants_length
     FROM customers c
     JOIN sizes s ON c.id = s.customer_id
-    WHERE c.id = :id
+    WHERE c.id = ?1
   `;
 
-  const { rows } = await db.execute<CustomerDetails>(query, params);
-  return rows[0];
+  const customer = await db.prepare(query).bind(id).first<CustomerDetails>();
+  return customer;
 };
 
-export const update = async (db: DbConnection, updates: Partial<CustomerDetails> & { id: string }) => {
-  const [customerUpdates, sizeUpdates] = [{}, {}] as Record<string, any>[];
+export const update = async (db: D1Database, updates: Partial<CustomerDetails> & { id: string }) => {
+  const [customerSet, customerValues, sizeSet, sizeValues] = [[], [], [], []] as string[][];
 
   Object.entries(updates).forEach(([key, value]) => {
     if (updatableCustomerFields.includes(key)) {
-      customerUpdates[key] = value;
+      customerSet.push(`${key} = ?`);
+      customerValues.push(value);
     }
     if (updatableSizeFields.includes(key)) {
-      sizeUpdates[key] = value;
+      sizeSet.push(`${key} = ?`);
+      sizeValues.push(value);
     }
   });
 
-  const customerColumns = Object.keys(customerUpdates);
-  const sizeColumns = Object.keys(sizeUpdates);
-  const toColumnsUpdate = (columns: string[]) => columns.map(c => `${c} = :${c}`);
-
   // changing customer info
-  if (customerColumns.length) {
-    const query = `UPDATE customers SET ${toColumnsUpdate(customerColumns).join(', ')} WHERE id = :id`;
-    await db.execute(query, { ...customerUpdates, id: updates.id });
+  if (customerValues.length) {
+    const query = `UPDATE customers SET ${customerSet.join(', ')} WHERE id = ?`;
+    await db.prepare(query).bind(...customerValues, updates.id).run();
   }
 
   // changing customer sizes
-  if (sizeColumns.length) {
-    const query = `UPDATE sizes SET ${toColumnsUpdate(sizeColumns).join(', ')} WHERE customer_id = :id`;
-    await db.execute(query, { ...sizeUpdates, id: updates.id });
+  if (sizeValues.length) {
+    const query = `UPDATE sizes SET ${sizeSet.join(', ')} WHERE customer_id = ?`;
+    await db.prepare(query).bind(...sizeValues, updates.id).run();
   }
 };

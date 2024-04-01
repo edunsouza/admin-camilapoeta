@@ -1,3 +1,8 @@
 name = "admin-service"
 main = "src/index.ts"
-compatibility_date = "2023-11-10"
+compatibility_date = "2023-10-25"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "prod"
+database_id = "0fc91c07-c7f8-4f9d-b914-06e15d95170b"

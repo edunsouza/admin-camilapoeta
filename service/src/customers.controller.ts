@@ -1,4 +1,4 @@
-import { Context } from 'hono';
+import { WorkerContext } from './configs';
 import { badRequestError, serverError, unknownError } from './helpers';
 import * as customersRepo from './customers.repo';
 
@@ -9,24 +9,7 @@ type Customer = {
   email: string;
 };
 
-type Size = {
-  sizeId: string;
-  customerId: string;
-  bust: string;
-  waist: string;
-  hip: string;
-  back: string;
-  cleavage: string;
-  arm: string;
-  sleeve: string;
-  crotch: string;
-  bustHeight: string;
-  bodyLength: string;
-  skirtLength: string;
-  pantsLength: string;
-};
-
-export const getAll = async (c: Context) => {
+export const getAll = async (c: WorkerContext) => {
   const page = Number(c.req.query('page')) || 1;
   const size = Number(c.req.query('size')) || 50;
   const offset = (page - 1) * size;
@@ -34,8 +17,8 @@ export const getAll = async (c: Context) => {
   const term = search?.toString().toLowerCase();
 
   try {
-    const db = c.get('dbConnection');
-    const { total, results } = await customersRepo.search(db, { size, offset, term });
+    const { DB } = c.env;
+    const { total, results } = await customersRepo.search(DB, { size, offset, term });
 
     return c.json({
       total,
@@ -47,7 +30,7 @@ export const getAll = async (c: Context) => {
   }
 };
 
-export const create = async (c: Context) => {
+export const create = async (c: WorkerContext) => {
   const { name, email, phone } = await c.req.json() as Customer;
 
   if (!name || (!email && !phone)) {
@@ -55,8 +38,8 @@ export const create = async (c: Context) => {
   }
 
   try {
-    const db = c.get('dbConnection');
-    const customer = await customersRepo.create(db, { name, email, phone });
+    const { DB } = c.env;
+    const customer = await customersRepo.create(DB, { name, email, phone });
 
     return c.json(customer);
   } catch (error) {
@@ -65,7 +48,7 @@ export const create = async (c: Context) => {
   }
 };
 
-export const getById = async (c: Context) => {
+export const getById = async (c: WorkerContext) => {
   const { id } = c.req.param();
 
   if (!id) {
@@ -73,8 +56,8 @@ export const getById = async (c: Context) => {
   }
 
   try {
-    const db = c.get('dbConnection');
-    const customer = await customersRepo.get(db, id);
+    const { DB } = c.env;
+    const customer = await customersRepo.get(DB, id);
 
     if (!customer) {
       return serverError(c, 'Cliente não encontrado');
@@ -87,7 +70,7 @@ export const getById = async (c: Context) => {
   }
 };
 
-export const updateById = async (c: Context) => {
+export const updateById = async (c: WorkerContext) => {
   const { id } = c.req.param();
   const body = await c.req.json();
 
@@ -96,9 +79,9 @@ export const updateById = async (c: Context) => {
   }
 
   try {
-    const db = c.get('dbConnection');
-    await customersRepo.update(db, { ...body, id });
-    const customer = await customersRepo.get(db, id);
+    const { DB } = c.env;
+    await customersRepo.update(DB, { ...body, id });
+    const customer = await customersRepo.get(DB, id);
 
     return c.json(customer);
   } catch (error) {
