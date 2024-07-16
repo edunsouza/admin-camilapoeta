@@ -4,5 +4,5 @@ compatibility_date = "2023-10-25"
 
 [[d1_databases]]
 binding = "DB"
-database_name = "prod"
-database_id = "0fc91c07-c7f8-4f9d-b914-06e15d95170b"
+database_name = "prod_beta"
+database_id = "bf8aacf7-396c-440c-aebb-23548a46ab5c"
